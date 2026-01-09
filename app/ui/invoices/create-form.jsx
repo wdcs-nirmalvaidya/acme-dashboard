@@ -8,7 +8,8 @@ import {
 } from '@heroicons/react/24/outline';
 import { Button } from './ui/button';
 
-export default function Form({ customers }: { customers: CustomerField[] }) {
+export default function Form({ customers }) {
+  console.log(customers);
   return (
     <form>
       <div className="rounded-md bg-gray-50 p-4 md:p-6">

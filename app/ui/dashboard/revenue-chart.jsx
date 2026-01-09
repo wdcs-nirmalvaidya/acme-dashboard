@@ -1,65 +1,87 @@
-import { generateYAxis } from './lib/utils';
+import { generateYAxis } from '../../lib/utils';
 import { CalendarIcon } from '@heroicons/react/24/outline';
-import { lusitana } from './ui/fonts';
-import { Revenue } from './lib/definitions';
+import { lusitana } from '../fonts';
+import { fetchRevenue } from '../../lib/data';
 
-// This component is representational only.
-// For data visualization UI, check out:
-// https://www.tremor.so/
-// https://www.chartjs.org/
-// https://airbnb.io/visx/
+export default async function RevenueChart() {
+  const revenue = await fetchRevenue();
 
-export default async function RevenueChart({
-  revenue,
-}: {
-  revenue: Revenue[];
-}) {
-  const chartHeight = 350;
-  // NOTE: Uncomment this code in Chapter 7
+  if (!revenue || revenue.length === 0) {
+    return (
+      <div className="w-full rounded-xl bg-white p-4">
+        <p className="text-gray-400">No revenue data available.</p>
+      </div>
+    );
+  }
 
-  // const { yAxisLabels, topLabel } = generateYAxis(revenue);
+  const chartHeight = 300;
+  const barWidth = 24;
+  const gap = 16;
 
-  // if (!revenue || revenue.length === 0) {
-  //   return <p className="mt-4 text-gray-400">No data available.</p>;
-  // }
+  const { yAxisLabels, topLabel } = generateYAxis(revenue);
 
   return (
-    <div className="w-full md:col-span-4">
-      <h2 className={`${lusitana.className} mb-4 text-xl md:text-2xl`}>
-        Recent Revenue
+    <div className="w-full rounded-xl bg-white p-4">
+      {/* HEADER */}
+      <h2
+        className={`${lusitana.className} mb-4 flex items-center gap-2 text-xl`}
+      >
+        <CalendarIcon className="h-5 w-5 text-gray-500" />
+        Revenue
       </h2>
-      {/* NOTE: Uncomment this code in Chapter 7 */}
 
-      {/* <div className="rounded-xl bg-gray-50 p-4">
-        <div className="sm:grid-cols-13 mt-0 grid grid-cols-12 items-end gap-2 rounded-md bg-white p-4 md:gap-4">
-          <div
-            className="mb-6 hidden flex-col justify-between text-sm text-gray-400 sm:flex"
-            style={{ height: `${chartHeight}px` }}
-          >
-            {yAxisLabels.map((label) => (
-              <p key={label}>{label}</p>
-            ))}
-          </div>
-
-          {revenue.map((month) => (
-            <div key={month.month} className="flex flex-col items-center gap-2">
-              <div
-                className="w-full rounded-md bg-blue-300"
-                style={{
-                  height: `${(chartHeight / topLabel) * month.revenue}px`,
-                }}
-              ></div>
-              <p className="-rotate-90 text-sm text-gray-400 sm:rotate-0">
-                {month.month}
-              </p>
-            </div>
+      {/* CHART */}
+      <div className="flex gap-4">
+        {/* Y AXIS */}
+        <div
+          className="flex flex-col justify-between text-sm text-gray-400"
+          style={{ height: chartHeight }}
+        >
+          {yAxisLabels.map((label, index) => (
+            <span key={`y-${index}`}>{label}</span>
           ))}
         </div>
-        <div className="flex items-center pb-2 pt-6">
-          <CalendarIcon className="h-5 w-5 text-gray-500" />
-          <h3 className="ml-2 text-sm text-gray-500 ">Last 12 months</h3>
-        </div>
-      </div> */}
+
+        {/* SVG BARS */}
+        <svg
+          width={(barWidth + gap) * revenue.length}
+          height={chartHeight}
+        >
+          {revenue.map((item, index) => {
+            const barHeight = (item.revenue / topLabel) * chartHeight;
+
+            return (
+              <rect
+                key={`${item.month}-${index}`} // ✅ FIXED UNIQUE KEY
+                x={index * (barWidth + gap)}
+                y={chartHeight - barHeight}
+                width={barWidth}
+                height={barHeight}
+                rx="4"
+                className="fill-blue-600"
+              />
+            );
+          })}
+        </svg>
+      </div>
+
+      {/* X AXIS */}
+      <div
+        className="mt-2 flex text-sm text-gray-400"
+        style={{ marginLeft: 48 }}
+      >
+        {revenue.map((item, index) => (
+          <span
+            key={`x-${item.month}-${index}`} // ✅ FIXED UNIQUE KEY
+            style={{
+              width: barWidth + gap,
+              textAlign: 'center',
+            }}
+          >
+            {item.month}
+          </span>
+        ))}
+      </div>
     </div>
   );
 }
