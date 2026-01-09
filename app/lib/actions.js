@@ -27,3 +27,26 @@ export async function createInvoice(formData) {
   // 🔁 Redirect back to invoices list
   redirect('/dashboard/invoices');
 }
+
+
+
+
+// AUTH ACTION
+import { signIn } from '../../auth';
+import { AuthError } from 'next-auth';
+
+export async function authenticate(prevState, formData) {
+  try {
+    await signIn('credentials', formData);
+  } catch (error) {
+
+    if (error instanceof AuthError) {
+      if (error.type === 'CredentialsSignin') {
+        return 'Invalid credentials';
+      }
+      return 'Something went wrong';
+    }
+
+    throw error;
+  }
+}
