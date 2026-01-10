@@ -1,7 +1,9 @@
 import { createInvoice } from '../../../lib/actions';
-
 import { fetchCustomers } from '../../../lib/data';
 
+export const metadata = {
+  title: 'Create Invoice',
+};
 
 export default async function Page() {
   const customers = await fetchCustomers();

@@ -7,13 +7,15 @@ import { Suspense } from 'react';
 import { InvoicesTableSkeleton } from '../../ui/skeletons';
 import { fetchInvoicesPages } from '../../lib/data';
 
+export const metadata = {
+  title: 'Invoices',
+};
+
 export default async function Page({ searchParams }) {
  
-  
   // ✅ FIX 1: unwrap Promise
   const params = await searchParams;
  
-
   const query = params?.query || '';
   const currentPage = Number(params?.page) || 1;
 

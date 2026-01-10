@@ -1,6 +1,10 @@
 import Search from '../../ui/search';
 import CustomersTable from '../../ui/customers/table';
 
+export const metadata = {
+  title: 'Customers',
+};
+
 export default async function Page({ searchParams }) {
 
   // ✅ FIX: unwrap promise

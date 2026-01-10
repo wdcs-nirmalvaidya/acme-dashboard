@@ -6,6 +6,10 @@ import {
 
 import { redirect } from 'next/navigation';
 
+export const metadata = {
+  title: 'Edit Invoice',
+};
+
 export default async function Page(props) {
   const params = await props.params;
   const id = params.id;
